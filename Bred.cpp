@@ -19,15 +19,13 @@ void hello() {
 }
 
 //Введение данных
-void touch(int* n, int* m, double*a, double*b){
+void touch(int* n, double*a, double*b){
 	double buff;
 	printf("Введите количество точек: ");
 	scanf_s("%d", n);
 	if ((*n) < 0) {
-		touch(n, m ,a, b);
+		touch(n, a, b);
 	}
-	printf("Введите количество слагаемых: ");
-	scanf_s("%d", m);
 	printf("Задайте левый конец отрезка: ");
 	scanf_s("%lf", a);
 	printf("Задайте правый конец отрезка: ");
@@ -39,6 +37,12 @@ void touch(int* n, int* m, double*a, double*b){
 	}
 }
 
+//Уоличество слагаемых
+void slag(int* m) {
+	printf("Введите количество слагаемых: ");
+	scanf_s("%d", m);
+}
+
 //Создание массива
 double* arr(double* m, int s) {
 	if (m != NULL) {
@@ -47,6 +51,7 @@ double* arr(double* m, int s) {
 	m = (double*)malloc(s * sizeof(double));
 	return m;
 }
+
 //Заполнение массивов
 void input(double a, double b, int n, int m, pFunc f, pMyFunc my_f,  double* x, double* f_x, double* my_f_x) {
 	double l = (b - a) / (n - 1);
@@ -102,6 +107,7 @@ double my_sinus(double x, int n) {
 
 	return result;
 }
+
 //Косинус
 double my_cosinus(double x, int n) {
 	while (x > 2 * M_PI) x -= 2 * M_PI;
@@ -124,7 +130,7 @@ double my_log(double x, int n) {
 		if (x == 0) {
 			return -INFINITY;
 		}
-		return NAN;
+		return -NAN;
 	}
 	int m = 0;
 	double f = x;
@@ -136,16 +142,12 @@ double my_log(double x, int n) {
 		f *= 2;
 		m--;
 	}
-	double z = f - 1, sum = 0, ch = z, sign = 1;
-	for (int i = 1; i <= n; n++) {
-		sum += (sign*ch) / i;
-		ch *= z;
-		sign = -sign;
-		if (fabs(ch / n) < 1e-12) {
-			break;
-		}
+	double z = f - 1, sum = z, ch = z;
+	for (int i = 2; i <= n; i++) {
+		ch *= -z;
+		sum += ch / i;
 	}
-	return m*0.69314718056 + sum;
+	return m * 0.69314718056 + sum;
 }
 
 int main() {
@@ -157,21 +159,29 @@ int main() {
 		turn = scanf_s("%d", &code);
 		switch (code) {
 		case 0: break;
-		case 1: touch(&n, &m, &a, &b);
+		case 1: touch(&n, &a, &b);
 			x = arr(x, n);
 			f_x = arr(f_x, n);
 			my_f_x = arr(my_f_x, n);
 			break;
-		case 2: input(a, b, n, m, exp, my_exp, x, f_x, my_f_x);
+		case 2: 
+			slag(&m);
+			input(a, b, n, m, exp, my_exp, x, f_x, my_f_x);
 			print_tab(x, f_x, my_f_x, n);
 			break;
-		case 3:input(a, b, n, m, sin, my_sinus, x, f_x, my_f_x);
+		case 3:
+			slag(&m);
+			input(a, b, n, m, sin, my_sinus, x, f_x, my_f_x);
 			print_tab(x, f_x, my_f_x, n);
 			break;
-		case 4: input(a, b, n, m, cos, my_cosinus, x, f_x, my_f_x);
+		case 4: 
+			slag(&m);
+			input(a, b, n, m, cos, my_cosinus, x, f_x, my_f_x);
 			print_tab(x, f_x, my_f_x, n);
 			break;
-		case 5: input(a, b, n, m, log, my_log, x, f_x, my_f_x);
+		case 5: 
+			slag(&m);
+			input(a, b, n, m, log, my_log, x, f_x, my_f_x);
 			print_tab(x, f_x, my_f_x, n);
 			break;
 		default: if (turn == 0) {
